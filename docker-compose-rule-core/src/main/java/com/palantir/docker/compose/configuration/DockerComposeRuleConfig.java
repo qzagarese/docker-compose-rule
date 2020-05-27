@@ -75,15 +75,15 @@ public abstract class DockerComposeRuleConfig {
 
     private static StreamEx<File> dirAndParents(File startDir) {
         return StreamEx.of(Stream.generate(new Supplier<Optional<File>>() {
-            private Optional<File> dir = Optional.of(startDir.getAbsoluteFile());
+                    private Optional<File> dir = Optional.of(startDir.getAbsoluteFile());
 
-            @Override
-            public Optional<File> get() {
-                Optional<File> toReturn = dir;
-                dir = dir.flatMap(directory -> Optional.ofNullable(directory.getParentFile()));
-                return toReturn;
-            }
-        }))
+                    @Override
+                    public Optional<File> get() {
+                        Optional<File> toReturn = dir;
+                        dir = dir.map(directory -> directory.getParentFile());
+                        return toReturn;
+                    }
+                }))
                 .takeWhile(Optional::isPresent)
                 .map(Optional::get);
     }
